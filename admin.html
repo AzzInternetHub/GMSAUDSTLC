@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        GMSA Admin Portal - UDS TLC
+    </title>
+
+
+    <link
+        rel="stylesheet"
+        href="admin.css"
+    >
+
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    >
+
+
+    <!-- Excel / CSV Reader -->
+
+    <script
+        src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"
+    ></script>
+
+</head>
+
+
+<body>
+
+<div class="admin-wrapper">
+
+
+    <!-- =====================================================
+         SIDEBAR
+         ===================================================== -->
+
+    <aside class="sidebar">
+
+        <div class="sidebar-brand">
+
+            <img
+                src="logo-gmsa.png"
+                class="logo"
+                alt="GMSA Logo"
+            >
+
+            <h3>
+                GMSA Admin
+            </h3>
+
+        </div>
+
+
+        <ul class="sidebar-menu">
+
+            <li
+                class="active"
+                onclick="showTab('dashboard')"
+            >
+                <i class="fas fa-chart-line"></i>
+                Dashboard
+            </li>
+
+
+            <li
+                onclick="showTab('dues')"
+            >
+                <i class="fas fa-hand-holding-usd"></i>
+                Collection of Dues
+            </li>
+
+
+            <li
+                onclick="showTab('payments')"
+            >
+                <i class="fas fa-money-check-dollar"></i>
+                Payment Records
+            </li>
+
+
+            <li
+                onclick="showTab('programs')"
+            >
+                <i class="fas fa-calendar-alt"></i>
+                Programs
+            </li>
+
+
+            <li
+                onclick="showTab('news')"
+            >
+                <i class="fas fa-newspaper"></i>
+                News & Messages
+            </li>
+
+
+            <li
+                onclick="showTab('execs')"
+            >
+                <i class="fas fa-user-tie"></i>
+                Executives
+            </li>
+
+
+            <li
+                onclick="showTab('prayers')"
+            >
+                <i class="fas fa-mosque"></i>
+                Prayer Times
+            </li>
+
+
+            <li
+                onclick="showTab('reminder')"
+            >
+                <i class="fas fa-quran"></i>
+                Daily Reminder
+            </li>
+
+
+            <li
+                onclick="showTab('sms')"
+            >
+                <i class="fas fa-sms"></i>
+                Hubtel Bulk SMS
+            </li>
+
+
+            <li
+                onclick="showTab('feedback')"
+            >
+                <i class="fas fa-comments"></i>
+                Feedback Received
+            </li>
+
+        </ul>
+
+    </aside>
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+         ===================================================== -->
+
+    <main class="main-content">
+
+
+        <header class="admin-header">
+
+            <div class="live-clock">
+
+                <i class="far fa-clock"></i>
+
+                <span id="liveClockDisplay">
+                    --:--:--
+                </span>
+
+            </div>
+
+
+            <button
+                id="adminThemeToggle"
+                class="btn-icon"
+            >
+
+                <i class="fas fa-moon"></i>
+
+            </button>
+
+        </header>
+
+
+        <!-- =================================================
+             DASHBOARD
+             ================================================= -->
+
+        <section
+            id="tab-dashboard"
+            class="tab-content active"
+        >
+
+            <h2>
+                Dashboard Overview
+            </h2>
+
+
+            <div class="card stat-card">
+
+                <h4>
+                    Total Muslims on Campus
+                </h4>
+
+
+                <div class="stat-input-wrap">
+
+                    <input
+                        type="number"
+                        id="muslimCountInput"
+                        placeholder="Enter total count"
+                    >
+
+
+                    <button
+                        class="btn btn-primary"
+                        onclick="updateMuslimCount()"
+                    >
+                        Update Count
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div class="dashboard-payment-summary">
+
+                <div class="mini-stat-card">
+
+                    <span>
+                        Total Dues
+                    </span>
+
+                    <strong id="dashboardDuesTotal">
+                        GHS 0.00
+                    </strong>
+
+                </div>
+
+
+                <div class="mini-stat-card">
+
+                    <span>
+                        Total Donations
+                    </span>
+
+                    <strong id="dashboardDonationTotal">
+                        GHS 0.00
+                    </strong>
+
+                </div>
+
+
+                <div class="mini-stat-card">
+
+                    <span>
+                        Successful Payments
+                    </span>
+
+                    <strong id="dashboardPaymentCount">
+                        0
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             MANUAL DUES
+             ================================================= -->
+
+        <section
+            id="tab-dues"
+            class="tab-content"
+        >
+
+            <h2>
+                Collection of GMSA Dues
+            </h2>
+
+
+            <form
+                id="duesForm"
+                class="card form"
+            >
+
+                <input
+                    type="text"
+                    name="dueStudentName"
+                    placeholder="Student Full Name"
+                    required
+                >
+
+
+                <input
+                    type="text"
+                    name="dueIndexNo"
+                    placeholder="Index / Reference No"
+                    required
+                >
+
+
+                <input
+                    type="email"
+                    name="dueEmail"
+                    placeholder="Student Email (Optional)"
+                >
+
+
+                <input
+                    type="number"
+                    name="dueAmount"
+                    placeholder="Amount Paid (GHS)"
+                    min="0"
+                    step="0.01"
+                    required
+                >
+
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    Record Dues Payment
+                </button>
+
+            </form>
+
+        </section>
+
+
+        <!-- =================================================
+             PAYMENT RECORDS
+             ================================================= -->
+
+        <section
+            id="tab-payments"
+            class="tab-content"
+        >
+
+            <h2>
+                Paystack Payment Records
+            </h2>
+
+
+            <div class="payment-filter-bar">
+
+                <select id="paymentTypeFilter">
+
+                    <option value="all">
+                        All Payments
+                    </option>
+
+                    <option value="dues">
+                        GMSA Dues
+                    </option>
+
+                    <option value="donation">
+                        Donations
+                    </option>
+
+                </select>
+
+
+                <button
+                    class="btn btn-primary"
+                    type="button"
+                    onclick="loadAdminData()"
+                >
+                    <i class="fas fa-rotate"></i>
+                    Refresh
+                </button>
+
+            </div>
+
+
+            <div
+                id="adminPaymentsList"
+                class="payment-records-list"
+            ></div>
+
+        </section>
+
+
+        <!-- =================================================
+             PROGRAMS
+             ================================================= -->
+
+        <section
+            id="tab-programs"
+            class="tab-content"
+        >
+
+            <h2>
+                Publish / Manage Programs
+            </h2>
+
+
+            <form
+                id="programForm"
+                class="card form"
+            >
+
+                <input
+                    type="text"
+                    id="progTitle"
+                    placeholder="Program Title"
+                    required
+                >
+
+
+                <input
+                    type="date"
+                    id="progDate"
+                    required
+                >
+
+
+                <textarea
+                    id="progDesc"
+                    placeholder="Program Description"
+                    required
+                ></textarea>
+
+
+                <input
+                    type="url"
+                    id="progPhotoUrl"
+                    placeholder="Postimages Direct Image URL"
+                >
+
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    Publish Program
+                </button>
+
+            </form>
+
+
+            <h3>
+                Manage Existing Programs
+            </h3>
+
+
+            <div
+                id="adminProgramsList"
+                class="grid grid-2"
+            ></div>
+
+        </section>
+
+
+        <!-- =================================================
+             NEWS
+             ================================================= -->
+
+        <section
+            id="tab-news"
+            class="tab-content"
+        >
+
+            <h2>
+                Publish / Manage News & Announcements
+            </h2>
+
+
+            <form
+                id="newsForm"
+                class="card form"
+            >
+
+                <input
+                    type="text"
+                    id="newsTitle"
+                    placeholder="Headline / Title"
+                    required
+                >
+
+
+                <textarea
+                    id="newsContent"
+                    placeholder="Write news content..."
+                    required
+                ></textarea>
+
+
+                <input
+                    type="url"
+                    id="newsPhotoUrl"
+                    placeholder="Postimages Direct Image URL"
+                >
+
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    Publish News
+                </button>
+
+            </form>
+
+
+            <h3>
+                Manage Existing News Posts
+            </h3>
+
+
+            <div
+                id="adminNewsList"
+                class="grid grid-2"
+            ></div>
+
+        </section>
+
+
+        <!-- =================================================
+             EXECUTIVES
+             ================================================= -->
+
+        <section
+            id="tab-execs"
+            class="tab-content"
+        >
+
+            <h2>
+                Manage Executives
+            </h2>
+
+
+            <form
+                id="execForm"
+                class="card form"
+            >
+
+                <input
+                    type="text"
+                    id="execName"
+                    placeholder="Full Name"
+                    required
+                >
+
+
+                <input
+                    type="text"
+                    id="execPosition"
+                    placeholder="Position"
+                    required
+                >
+
+
+                <input
+                    type="email"
+                    id="execEmail"
+                    placeholder="Email Address"
+                    required
+                >
+
+
+                <textarea
+                    id="execBio"
+                    placeholder="Short Bio"
+                ></textarea>
+
+
+                <input
+                    type="url"
+                    id="execPhotoUrl"
+                    placeholder="Postimages Direct Photo URL"
+                >
+
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    Add Executive
+                </button>
+
+            </form>
+
+
+            <h3>
+                Manage Current Executives
+            </h3>
+
+
+            <div
+                id="adminExecList"
+                class="grid grid-2"
+            ></div>
+
+        </section>
+
+
+        <!-- =================================================
+             PRAYERS
+             ================================================= -->
+
+        <section
+            id="tab-prayers"
+            class="tab-content"
+        >
+
+            <h2>
+                Update Prayer Times
+            </h2>
+
+
+            <form
+                id="prayerForm"
+                class="card form grid grid-2"
+            >
+
+                <input
+                    type="text"
+                    name="fajr"
+                    placeholder="Fajr"
+                >
+
+                <input
+                    type="text"
+                    name="dhuhr"
+                    placeholder="Dhuhr"
+                >
+
+                <input
+                    type="text"
+                    name="asr"
+                    placeholder="Asr"
+                >
+
+                <input
+                    type="text"
+                    name="maghrib"
+                    placeholder="Maghrib"
+                >
+
+                <input
+                    type="text"
+                    name="isha"
+                    placeholder="Isha"
+                >
+
+                <input
+                    type="text"
+                    name="jumuah"
+                    placeholder="Jumuah"
+                >
+
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                    style="grid-column: span 2;"
+                >
+                    Save Prayer Times
+                </button>
+
+            </form>
+
+        </section>
+
+
+        <!-- =================================================
+             REMINDER
+             ================================================= -->
+
+        <section
+            id="tab-reminder"
+            class="tab-content"
+        >
+
+            <h2>
+                Update Daily Islamic Reminder
+            </h2>
+
+
+            <form
+                id="reminderForm"
+                class="card form"
+            >
+
+                <textarea
+                    id="reminderText"
+                    placeholder="Verse / Hadith / Quote"
+                    required
+                ></textarea>
+
+
+                <input
+                    type="url"
+                    id="reminderPhotoUrl"
+                    placeholder="Postimages Direct Image URL"
+                >
+
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    Set Reminder
+                </button>
+
+            </form>
+
+        </section>
+
+
+        <!-- =================================================
+             HUBTEL SMS
+             ================================================= -->
+
+        <section
+            id="tab-sms"
+            class="tab-content"
+        >
+
+            <h2>
+                Hubtel Bulk & Individual SMS
+            </h2>
+
+
+            <!-- =========================
+                 HUBTEL SETTINGS
+                 ========================= -->
+
+            <div class="card sms-settings-card">
+
+                <div class="sms-section-heading">
+
+                    <div>
+
+                        <h3>
+                            Hubtel Developer Credentials
+                        </h3>
+
+                        <p>
+                            Enter the Hubtel credentials
+                            belonging to the developer/account
+                            you want this portal to use.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <form
+                    id="smsSettingsForm"
+                    class="form"
+                >
+
+                    <input
+                        type="text"
+                        id="smsClientId"
+                        placeholder="Hubtel Client ID"
+                        autocomplete="off"
+                    >
+
+
+                    <input
+                        type="password"
+                        id="smsClientSecret"
+                        placeholder="Hubtel Client Secret"
+                        autocomplete="new-password"
+                    >
+
+
+                    <input
+                        type="text"
+                        id="smsSenderId"
+                        placeholder="Approved Hubtel Sender ID"
+                        maxlength="11"
+                    >
+
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                    >
+                        <i class="fas fa-save"></i>
+                        Save Hubtel Settings
+                    </button>
+
+                </form>
+
+            </div>
+
+
+            <!-- =========================
+                 SMS SENDING
+                 ========================= -->
+
+            <form
+                id="smsPortalForm"
+                class="card form sms-portal-card"
+            >
+
+                <label>
+                    Recipient Type
+                </label>
+
+
+                <select id="smsRecipientType">
+
+                    <option value="all">
+                        All Subscribed Members
+                    </option>
+
+                    <option value="single">
+                        Single Phone Number
+                    </option>
+
+                    <option value="excel">
+                        Uploaded Excel Contacts
+                    </option>
+
+                </select>
+
+
+                <div
+                    id="singlePhoneGroup"
+                    class="sms-recipient-group"
+                >
+
+                    <input
+                        type="tel"
+                        id="smsSinglePhone"
+                        placeholder="Enter recipient number"
+                    >
+
+
+                    <input
+                        type="text"
+                        id="smsSingleName"
+                        placeholder="Recipient Name (for personalization)"
+                    >
+
+                </div>
+
+
+                <div
+                    id="excelUploadGroup"
+                    class="sms-recipient-group"
+                    style="display:none;"
+                >
+
+                    <label
+                        for="smsExcelFile"
+                        class="file-upload-label"
+                    >
+
+                        <i class="fas fa-file-excel"></i>
+
+                        Select Excel / CSV Contacts
+
+                    </label>
+
+
+                    <input
+                        type="file"
+                        id="smsExcelFile"
+                        accept=".xlsx,.xls,.csv"
+                    >
+
+
+                    <p class="field-help">
+                        Recommended columns:
+                        <strong>Name</strong> and
+                        <strong>Phone</strong>.
+                        The system also recognizes
+                        common alternatives such as
+                        Full Name, Mobile, Number and Telephone.
+                    </p>
+
+
+                    <div
+                        id="excelContactPreview"
+                        class="excel-preview"
+                    ></div>
+
+                </div>
+
+
+                <div class="sms-personalization-box">
+
+                    <strong>
+                        Personalization
+                    </strong>
+
+                    <p>
+                        Use
+                        <code>{name}</code>
+                        or
+                        <code>{{name}}</code>
+                        for the recipient's full name.
+                    </p>
+
+                    <p>
+                        You can also use
+                        <code>{firstName}</code>
+                        or
+                        <code>{{firstName}}</code>.
+                    </p>
+
+                    <div
+                        id="smsPreview"
+                        class="sms-message-preview"
+                    >
+                        Your personalized message preview
+                        will appear here.
+                    </div>
+
+                </div>
+
+
+                <textarea
+                    id="smsMessage"
+                    placeholder="Type SMS message. Example: Hello {name}, GMSA invites you to our program..."
+                    maxlength="1000"
+                    required
+                ></textarea>
+
+
+                <div class="sms-character-info">
+
+                    <span id="smsCharacterCount">
+                        0 characters
+                    </span>
+
+                    <span>
+                        Personalization is applied
+                        separately to each recipient.
+                    </span>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+
+                    <i class="fas fa-paper-plane"></i>
+
+                    Send SMS
+
+                </button>
+
+            </form>
+
+        </section>
+
+
+        <!-- =================================================
+             FEEDBACK
+             ================================================= -->
+
+        <section
+            id="tab-feedback"
+            class="tab-content"
+        >
+
+            <h2>
+                Feedback Received
+            </h2>
+
+
+            <div
+                id="feedbackContainer"
+                class="grid grid-2"
+            ></div>
+
+        </section>
+
+
+    </main>
+
+</div>
+
+
+<!-- =========================================================
+     EDIT ITEM MODAL
+     ========================================================= -->
+
+<div
+    id="editModal"
+    class="modal-overlay"
+>
+
+    <div class="modal-card">
+
+        <span
+            class="close-modal"
+            onclick="closeEditModal()"
+        >
+            &times;
+        </span>
+
+
+        <h3 id="editModalTitle">
+            Edit Item
+        </h3>
+
+
+        <form
+            id="editItemForm"
+            class="form"
+            style="margin-top:15px;"
+        >
+
+            <input
+                type="hidden"
+                id="editItemSheet"
+            >
+
+
+            <input
+                type="hidden"
+                id="editItemId"
+            >
+
+
+            <div
+                id="editDynamicFields"
+            ></div>
+
+
+            <label>
+                Image Link
+            </label>
+
+
+            <input
+                type="url"
+                id="editItemPhotoUrl"
+                placeholder="https://i.postimg.cc/..."
+            >
+
+
+            <div
+                style="
+                    display:flex;
+                    gap:10px;
+                    margin-top:15px;
+                "
+            >
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                    style="flex:1;"
+                >
+                    Save Changes
+                </button>
+
+
+                <button
+                    type="button"
+                    class="btn"
+                    onclick="closeEditModal()"
+                    style="
+                        background:#64748b;
+                        color:white;
+                    "
+                >
+                    Cancel
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<script src="admin.js"></script>
+
+</body>
+</html>
